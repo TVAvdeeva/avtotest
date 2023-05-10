@@ -33,8 +33,7 @@ public class OtusTest {
     @AfterEach
     public void close(){
         if (driver != null)
-            driver.close();
-            driver.quit();
+              driver.quit();
     }
 
     @Test
@@ -52,7 +51,6 @@ public class OtusTest {
         //   Открыть https://otus.ru в “чистом браузере”
 
         if (driver != null) {
-            driver.close();
             driver.quit();
         }
         proverka();
@@ -90,11 +88,6 @@ public class OtusTest {
         form.findElement(By.xpath(".//input[@name='email']")).sendKeys(login);
         form.findElement(By.xpath(".//input[@name='password']")).sendKeys(password);
         form.findElement(By.xpath(".//button[@type='submit']")).submit();
-    }
-
-    private void clearAndEnter(By by, String text){
-        driver.findElement(by).clear();
-        driver.findElement(by).sendKeys(text);
     }
 
     private void enterLP(){

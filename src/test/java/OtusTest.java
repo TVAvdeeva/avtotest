@@ -1,3 +1,5 @@
+import data.residence.CountryData;
+import data.residence.ResidenceData;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.*;
@@ -6,7 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-
+import data.personals.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -15,16 +17,19 @@ import java.time.Duration;
 import static org.apache.commons.lang3.StringUtils.substring;
 
 public class OtusTest {
-
-    protected WebDriver driver;
+    private WebDriver driver;
     private final String login=System.getProperty("login");
     private final String password = System.getProperty("password");
     private String  url=System.getProperty("url");
     private org.apache.logging.log4j.Logger logger = LogManager.getLogger(OtusTest.class);
 
+    @BeforeAll
+    public static void beforeTest() {
+        WebDriverManager.chromedriver().setup();
+    }
+
     @BeforeEach
     public void setUp(){
-        WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--remote-allow-origins=*");
         driver = new ChromeDriver(options);
@@ -33,6 +38,7 @@ public class OtusTest {
     @AfterEach
     public void close(){
         if (driver != null)
+              driver.close();
               driver.quit();
     }
 
@@ -57,47 +63,28 @@ public class OtusTest {
 
     }
 
-    private void proverka(){
-        setUp();
-        driver.get(url);
-        loginInOtus();
-//        Войти в личный кабинет
-        enterLP();
-        checkTextValueArea(driver.findElement(By.id("id_fname")), "Мария");
-        checkTextValueArea(driver.findElement(By.id("id_fname_latin")), "Maria");
-        checkTextValueArea(driver.findElement(By.id("id_lname")), "Иванова");
-        checkTextValueArea(driver.findElement(By.id("id_lname_latin")), "Ivanova");
-        checkTextValueArea(driver.findElement(By.xpath("//input[@id='id_blog_name']")), "testblok");
-        checkTextValueArea(driver.findElement(By.xpath("//input[@name='date_of_birth']")), "01.01.1985");
-        checkTextTextArea(driver.findElement(By.xpath("//div[contains(text(),'Россия')]")), "Россия");
-        checkTextTextArea(driver.findElement(By.xpath("//div[contains(text(),'Владивосток')]")), "Владивосток");
-        checkTextTextArea(driver.findElement(By.xpath("//div[contains(text(),'Средний (Intermediate)')]")), "Средний (Intermediate)");
-        checkTextTextArea(driver.findElement(By.xpath("//div[contains(text(),'Skype')]")), "Skype");
-        checkTextValueArea(driver.findElement(By.xpath("//input[@id='id_contact-0-value']")), "fox123)");
-        checkTextValueArea(driver.findElement(By.xpath("//input[@id='id_contact-1-value']")), "+79114967878");
-        checkTextValueArea(driver.findElement(By.xpath("//input[@id='id_company']")), "WB");
-        checkTextValueArea(driver.findElement(By.xpath("//input[@id='id_work']")), "Инженер");
-        clearContact ();
 
-    }
 
     private void loginInOtus(){
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(50));
-        wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(".header3__button-sign-in"))).click();
-        WebElement form = driver.findElement(By.xpath("//form[@action = '/login/']"));
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+        getElementClickable(By.cssSelector(".header3__button-sign-in")).click();
+        //div.header3__user-info-popup:nth-child(4)
+        WebElement form = driver.findElement(By.xpath("//div[contains(@class, 'modal-container')][1]"));
+        wait.until(ExpectedConditions.visibilityOf(form));
         form.findElement(By.xpath(".//input[@name='email']")).sendKeys(login);
         form.findElement(By.xpath(".//input[@name='password']")).sendKeys(password);
         form.findElement(By.xpath(".//button[@type='submit']")).submit();
     }
 
     private void enterLP(){
-       new WebDriverWait(driver, Duration.ofSeconds(20))
+      WebElement form=driver.findElement(By.cssSelector(".header3__container"));
+       new WebDriverWait(driver, Duration.ofSeconds(100))
                 .until(ExpectedConditions
-                        .invisibilityOf(
-                                driver.findElement(By.cssSelector(".header3__container"))));
-        driver.findElement(By.cssSelector(".header3__user-info-name")).click();
-        driver.findElement(By.xpath("//a[contains(text(),'Мой профиль')]")).click();
-        logger.info("Открываем личный кабинет");
+                        .invisibilityOf( form));
+
+      getElementClickable(By.cssSelector(".header3__user-info-name")).click();
+      getElementClickable(By.cssSelector("a.header3__user-info-popup-link:nth-child(1)")).click();
+      logger.info("Открываем личный кабинет");
     }
     private void convertUrl() {
 
@@ -111,34 +98,31 @@ public class OtusTest {
         WebDriverWait wait = new WebDriverWait(driver,  Duration.ofSeconds(50));
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
-    private void checkTextValueArea(WebElement element, String expectedText) {
-        Assertions.assertEquals(expectedText, element.getAttribute("value"));
-    }
-    private void checkTextTextArea(WebElement element, String expectedText) {
+    private void checkTextTextArea( String expectedText) {
+        String xpath = String.format("//div[contains(text(),'%s')]", expectedText);
+        WebElement element=driver.findElement(By.xpath(xpath));
         Assertions.assertEquals(expectedText, element.getText());
     }
 
+     private void checkTextValueArea(WebElement element, String expectedText) {
+
+        Assertions.assertEquals(expectedText, element.getAttribute("value"));
+    }
+
     private void findElemSetValue(By locator, String value) {
-        WebElement element = getElementClickable(locator);//wait.until(ExpectedConditions.elementToBeClickable(locator));
+        WebElement element = getElementClickable(locator);
         element.clear();
         element.sendKeys(value);
 
     }
     private void setPrivateDataInfo() {
-        final String name = "Мария";
-        final String nameLatin = "Maria";
-        final String lastName = "Иванова";
-        final String lastNameLatin = "Ivanova";
-        final String blogName = "testblok";
-        final String dateOfBirth = "01.01.1985";
 
-
-        findElemSetValue(By.id("id_fname"),name );
-        findElemSetValue(By.id("id_lname"), lastName);
-        findElemSetValue(By.id("id_fname_latin"),nameLatin);
-        findElemSetValue(By.id("id_lname_latin"), lastNameLatin);
-        findElemSetValue(By.id("id_blog_name"),blogName);
-        findElemSetValue(By.xpath("//input[@name='date_of_birth']"), dateOfBirth);
+        findElemSetValue(By.id("id_fname"),UserInfoData.FIRST_NAME.getName() );
+        findElemSetValue(By.id("id_lname"), UserInfoData.SECOND_NAME.getName());
+        findElemSetValue(By.id("id_fname_latin"),UserInfoData.FIRST_NAME_LATIN.getName());
+        findElemSetValue(By.id("id_lname_latin"), UserInfoData.SECOND_NAME_LATIN.getName());
+        findElemSetValue(By.id("id_blog_name"),UserInfoData.BLOG_NAME.getName());
+        findElemSetValue(By.xpath("//input[@name='date_of_birth']"), UserInfoData.BIRTH_DATE.getName());
 
     }
 
@@ -146,24 +130,23 @@ public class OtusTest {
 
 
         getElementClickable(By.xpath("//input[@name='country']/following-sibling::div")).click();
-        getElementClickable(By.xpath("//button[contains(text(),'Россия')]")).click();
+        setDataInfo(CountryData.Russia.getName());
         getElementClickable(By.xpath("//input[@name='city']/following-sibling::div/span")).click();
-        getElementClickable(By.xpath("//button[contains(text(),'Владивосток')]")).click();
+        setDataInfo(String.valueOf(ResidenceData.ResidenceOne.getName()));
         getElementClickable(By.xpath("//input[@name='english_level']/following-sibling::div")).click();
-        getElementClickable(By.xpath("//button[contains(text(),'Средний (Intermediate)')]")).click();
+        setDataInfo(String.valueOf(LanguageData.INTERMEDIATE.getName()));
         getElementClickable(By.xpath("//span[contains(text(),'Да')]")).click();
-
         getElementClickable(By.xpath("//span[contains(text(),'Способ связи')]")).click();
-        getElementClickable(By.xpath("//button[contains(text(),'Skype')]")).click();//input[@name='contact-%s-value']
-        findElemSetValue(By.xpath("//input[@id='id_contact-0-value']"), "fox123)");
+        setDataInfo(String.valueOf(ContactsData.VK.getName()));
+        findElemSetValue(By.xpath("//input[@id='id_contact-0-value']"), ContactsFieldData.CONTACT1.getName());
         getElementClickable(By.xpath("//button[contains(text(),'Добавить')]")).click();
-        findElemSetValue(By.xpath("//input[@id='id_contact-1-value']"), "+79114967878");
+        findElemSetValue(By.xpath("//input[@id='id_contact-1-value']"), ContactsFieldData.CONTACT2.getName());
         getElementClickable(By.xpath("//span[contains(text(),'Способ связи')]")).click();
-        getElementClickable(By.xpath("//button[contains(text(),' Тelegram')]")).click();
+        setDataInfo(String.valueOf(ContactsData.TELEGRAM.getName()));
         getElementClickable(By.xpath("//select[@id='id_gender']")).click();
-        getElementClickable(By.xpath("//option[contains(text(),'Женский')]")).click();
-        findElemSetValue(By.xpath("//input[@id='id_company']"), "WB");
-        findElemSetValue(By.xpath("//input[@id='id_work']"), "Инженер");
+        getElementClickable(By.xpath(String.format("//option[contains(text(),'%s')]",UserInfoData.GENDER.getName()))).click();
+        findElemSetValue(By.xpath("//input[@id='id_company']"), UserInfoData.COMPANY.getName());
+        findElemSetValue(By.xpath("//input[@id='id_work']"), UserInfoData.WORK.getName());
         driver.findElement(By.cssSelector(".button_md-4:nth-child(1)")).submit();
 
 
@@ -172,6 +155,39 @@ public class OtusTest {
         driver.findElement(By.xpath("//input[@id='id_contact-0-value']")).clear();
         driver.findElement(By.xpath("//input[@id='id_contact-1-value']")).clear();
         driver.findElement(By.cssSelector(".button_md-4:nth-child(1)")).submit();
+    }
+    private void setDataInfo(String someText){
+       String xpathSelector = String.format("//button[contains(text(),'%s')]", someText);
+       getElementClickable(By.xpath(xpathSelector)).click();
+    }
+    public boolean elementIsNotPresent(String xpath){
+        return driver.findElements(By.xpath(xpath)).isEmpty();
+
+
+    }
+    private void proverka(){
+        setUp();
+        driver.get(url);
+        loginInOtus();
+//        Войти в личный кабинет
+        enterLP();
+        checkTextValueArea(driver.findElement(By.id("id_fname")), UserInfoData.FIRST_NAME.getName());
+        checkTextValueArea(driver.findElement(By.id("id_fname_latin")), UserInfoData.FIRST_NAME_LATIN.getName());
+        checkTextValueArea(driver.findElement(By.id("id_lname")), UserInfoData.SECOND_NAME.getName());
+        checkTextValueArea(driver.findElement(By.id("id_lname_latin")),UserInfoData.SECOND_NAME_LATIN.getName());
+        checkTextValueArea(driver.findElement(By.xpath("//input[@id='id_blog_name']")), UserInfoData.BLOG_NAME.getName());
+        checkTextValueArea(driver.findElement(By.xpath("//input[@name='date_of_birth']")), UserInfoData.BIRTH_DATE.getName());
+        checkTextTextArea(CountryData.Russia.getName());
+        checkTextTextArea(ResidenceData.ResidenceOne.getName());
+        checkTextTextArea(LanguageData.INTERMEDIATE.getName());
+        checkTextTextArea(ContactsData.VK.getName());
+        checkTextTextArea(ContactsData.TELEGRAM.getName().trim());
+        checkTextValueArea(driver.findElement(By.xpath("//input[@id='id_contact-0-value']")), ContactsFieldData.CONTACT2.getName());
+        checkTextValueArea(driver.findElement(By.xpath("//input[@id='id_contact-1-value']")), ContactsFieldData.CONTACT1.getName());
+        checkTextValueArea(driver.findElement(By.xpath("//input[@id='id_company']")), UserInfoData.COMPANY.getName());
+        checkTextValueArea(driver.findElement(By.xpath("//input[@id='id_work']")), UserInfoData.WORK.getName());
+        clearContact ();
+
     }
 }
 

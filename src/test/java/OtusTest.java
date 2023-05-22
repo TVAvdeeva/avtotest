@@ -54,10 +54,7 @@ public class OtusTest {
 
         //   Открыть https://otus.ru в “чистом браузере”
 
-        if (driver != null) {
-            driver.close();
-            driver.quit();
-        }
+        close();
         proverka();
 
     }

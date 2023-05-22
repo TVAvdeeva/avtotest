@@ -1,9 +1,4 @@
-<<<<<<< HEAD
 import data.residence.*;
-=======
-import data.residence.CountryData;
-import data.residence.ResidenceData;
->>>>>>> 3826f75fa1a678eb9caf373a5261970eef55bde6
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.*;
@@ -11,24 +6,14 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import data.personals.*;
-<<<<<<< HEAD
 import org.openqa.selenium.support.ui.*;
-=======
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-
->>>>>>> 3826f75fa1a678eb9caf373a5261970eef55bde6
 import java.time.Duration;
 
 import static org.apache.commons.lang3.StringUtils.substring;
 
 public class OtusTest {
-<<<<<<< HEAD
 
     private  WebDriver driver;
-=======
-    private WebDriver driver;
->>>>>>> 3826f75fa1a678eb9caf373a5261970eef55bde6
     private final String login=System.getProperty("login");
     private final String password = System.getProperty("password");
     private String  url=System.getProperty("url");
@@ -45,20 +30,14 @@ public class OtusTest {
         options.addArguments("--remote-allow-origins=*");
         options.addArguments("--start-maximized");
         driver = new ChromeDriver(options);
-     }
+    }
 
     @AfterEach
     public void close(){
-<<<<<<< HEAD
         if (driver != null) {
             driver.close();
             driver.quit();
         }
-=======
-        if (driver != null)
-              driver.close();
-              driver.quit();
->>>>>>> 3826f75fa1a678eb9caf373a5261970eef55bde6
     }
 
     @Test
@@ -82,51 +61,25 @@ public class OtusTest {
         proverka();
 
     }
-<<<<<<< HEAD
-  
+
     private void loginInOtus(){
-       getElementClickable(By.cssSelector(".header3__button-sign-in")).click();
-       waitVisible(By.cssSelector(".js-login"));
+        getElementClickable(By.cssSelector(".header3__button-sign-in")).click();
+        waitVisible(By.cssSelector(".js-login"));
         //input.new-input:nth-child(2)
 
-	   driver.findElement(By.cssSelector(".js-email-input")).sendKeys(login);
-	   driver.findElement(By.cssSelector(".js-psw-input")).sendKeys(password);
-	   driver.findElement(By.cssSelector(".new-button_md")).submit();
-       waitClickInvisible(By.xpath("//div[contains(@class, 'modal-container')][1]"));
-	}
-
-    private void enterLP(){
-
-    // WebElement form=driver.findElement(By.cssSelector(".header3__container"));
-       waitVisible(By.cssSelector(".header3__container"));
-       getElementClickable(By.cssSelector(".header3__user-info-name")).click();
-       getElementClickable(By.cssSelector("a.header3__user-info-popup-link:nth-child(1)")).click();
-       logger.info("Открываем личный кабинет");
-=======
-
-
-
-    private void loginInOtus(){
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
-        getElementClickable(By.cssSelector(".header3__button-sign-in")).click();
-        //div.header3__user-info-popup:nth-child(4)
-        WebElement form = driver.findElement(By.xpath("//div[contains(@class, 'modal-container')][1]"));
-        wait.until(ExpectedConditions.visibilityOf(form));
-        form.findElement(By.xpath(".//input[@name='email']")).sendKeys(login);
-        form.findElement(By.xpath(".//input[@name='password']")).sendKeys(password);
-        form.findElement(By.xpath(".//button[@type='submit']")).submit();
+        driver.findElement(By.cssSelector(".js-email-input")).sendKeys(login);
+        driver.findElement(By.cssSelector(".js-psw-input")).sendKeys(password);
+        driver.findElement(By.cssSelector(".new-button_md")).submit();
+        waitClickInvisible(By.xpath("//div[contains(@class, 'modal-container')][1]"));
     }
 
     private void enterLP(){
-      WebElement form=driver.findElement(By.cssSelector(".header3__container"));
-       new WebDriverWait(driver, Duration.ofSeconds(100))
-                .until(ExpectedConditions
-                        .invisibilityOf( form));
 
-      getElementClickable(By.cssSelector(".header3__user-info-name")).click();
-      getElementClickable(By.cssSelector("a.header3__user-info-popup-link:nth-child(1)")).click();
-      logger.info("Открываем личный кабинет");
->>>>>>> 3826f75fa1a678eb9caf373a5261970eef55bde6
+        // WebElement form=driver.findElement(By.cssSelector(".header3__container"));
+        waitVisible(By.cssSelector(".header3__container"));
+        getElementClickable(By.cssSelector(".header3__user-info-name")).click();
+        getElementClickable(By.cssSelector("a.header3__user-info-popup-link:nth-child(1)")).click();
+        logger.info("Открываем личный кабинет");
     }
     private void convertUrl() {
 
@@ -136,17 +89,17 @@ public class OtusTest {
         url=url.toLowerCase();
 
     }
-   
-     public void waitVisible(By locator) {
+
+    public void waitVisible(By locator) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
         Assertions.assertTrue(wait.until(ExpectedConditions.visibilityOfElementLocated(locator)).isDisplayed());
-     }
+    }
 
     public void waitClickInvisible(By locator) {
-       WebDriverWait wait = new WebDriverWait(driver,  Duration.ofSeconds(5));
-       Assertions.assertTrue(wait.until(ExpectedConditions.invisibilityOfElementLocated(locator)));
+        WebDriverWait wait = new WebDriverWait(driver,  Duration.ofSeconds(5));
+        Assertions.assertTrue(wait.until(ExpectedConditions.invisibilityOfElementLocated(locator)));
     }
-   
+
     private WebElement getElementClickable(By locator) {
         WebDriverWait wait = new WebDriverWait(driver,  Duration.ofSeconds(20));
         return wait.until(ExpectedConditions.elementToBeClickable(locator));
@@ -157,7 +110,7 @@ public class OtusTest {
         Assertions.assertEquals(expectedText, element.getText());
     }
 
-     private void checkTextValueArea(WebElement element, String expectedText) {
+    private void checkTextValueArea(WebElement element, String expectedText) {
 
         Assertions.assertEquals(expectedText, element.getAttribute("value"));
     }
@@ -204,14 +157,14 @@ public class OtusTest {
 
 
     }
-      public void  clearContact (){
+    public void  clearContact (){
         driver.findElement(By.xpath("//input[@id='id_contact-0-value']")).clear();
         driver.findElement(By.xpath("//input[@id='id_contact-1-value']")).clear();
         driver.findElement(By.cssSelector(".button_md-4:nth-child(1)")).submit();
     }
     private void setDataInfo(String someText){
-       String xpathSelector = String.format("//button[contains(text(),'%s')]", someText);
-       getElementClickable(By.xpath(xpathSelector)).click();
+        String xpathSelector = String.format("//button[contains(text(),'%s')]", someText);
+        getElementClickable(By.xpath(xpathSelector)).click();
     }
     public boolean elementIsNotPresent(String xpath){
         return driver.findElements(By.xpath(xpath)).isEmpty();

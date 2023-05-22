@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import data.residence.*;
+=======
+import data.residence.CountryData;
+import data.residence.ResidenceData;
+>>>>>>> 3826f75fa1a678eb9caf373a5261970eef55bde6
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.LogManager;
 import org.junit.jupiter.api.*;
@@ -6,14 +11,24 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import data.personals.*;
+<<<<<<< HEAD
 import org.openqa.selenium.support.ui.*;
+=======
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+>>>>>>> 3826f75fa1a678eb9caf373a5261970eef55bde6
 import java.time.Duration;
 
 import static org.apache.commons.lang3.StringUtils.substring;
 
 public class OtusTest {
+<<<<<<< HEAD
 
     private  WebDriver driver;
+=======
+    private WebDriver driver;
+>>>>>>> 3826f75fa1a678eb9caf373a5261970eef55bde6
     private final String login=System.getProperty("login");
     private final String password = System.getProperty("password");
     private String  url=System.getProperty("url");
@@ -34,10 +49,16 @@ public class OtusTest {
 
     @AfterEach
     public void close(){
+<<<<<<< HEAD
         if (driver != null) {
             driver.close();
             driver.quit();
         }
+=======
+        if (driver != null)
+              driver.close();
+              driver.quit();
+>>>>>>> 3826f75fa1a678eb9caf373a5261970eef55bde6
     }
 
     @Test
@@ -61,6 +82,7 @@ public class OtusTest {
         proverka();
 
     }
+<<<<<<< HEAD
   
     private void loginInOtus(){
        getElementClickable(By.cssSelector(".header3__button-sign-in")).click();
@@ -80,6 +102,31 @@ public class OtusTest {
        getElementClickable(By.cssSelector(".header3__user-info-name")).click();
        getElementClickable(By.cssSelector("a.header3__user-info-popup-link:nth-child(1)")).click();
        logger.info("Открываем личный кабинет");
+=======
+
+
+
+    private void loginInOtus(){
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(100));
+        getElementClickable(By.cssSelector(".header3__button-sign-in")).click();
+        //div.header3__user-info-popup:nth-child(4)
+        WebElement form = driver.findElement(By.xpath("//div[contains(@class, 'modal-container')][1]"));
+        wait.until(ExpectedConditions.visibilityOf(form));
+        form.findElement(By.xpath(".//input[@name='email']")).sendKeys(login);
+        form.findElement(By.xpath(".//input[@name='password']")).sendKeys(password);
+        form.findElement(By.xpath(".//button[@type='submit']")).submit();
+    }
+
+    private void enterLP(){
+      WebElement form=driver.findElement(By.cssSelector(".header3__container"));
+       new WebDriverWait(driver, Duration.ofSeconds(100))
+                .until(ExpectedConditions
+                        .invisibilityOf( form));
+
+      getElementClickable(By.cssSelector(".header3__user-info-name")).click();
+      getElementClickable(By.cssSelector("a.header3__user-info-popup-link:nth-child(1)")).click();
+      logger.info("Открываем личный кабинет");
+>>>>>>> 3826f75fa1a678eb9caf373a5261970eef55bde6
     }
     private void convertUrl() {
 
